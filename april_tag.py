@@ -1,5 +1,7 @@
 # python3 april_tag.py
 
+# IMPORTANT: Press q to switch to the next frame
+
 # import the necessary packages
 import apriltag
 import cv2
