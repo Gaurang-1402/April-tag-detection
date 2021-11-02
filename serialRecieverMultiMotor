@@ -1,0 +1,71 @@
+#include <Servo.h>
+
+int numMotors = 5;
+
+Servo motors[numMotors];
+
+int action;
+int Speed;
+
+int neutral = 1500;
+int startPropForward = 1515;
+int fullForward = 2000;
+int startPropBackwards = 1485;
+int fullBackwards = 1000;
+
+void setup() {
+  Serial.begin(115200);
+  motor.attach(10);
+
+}
+
+void loop() {
+  if(Serial.available() > 0){
+    action = Serial.read();
+    delay(10);
+    Speed = Serial.read();
+    if(action == 1){
+      for(int i = 0; i < numMotors; ++i) //Loop through every motor and move it.
+        forward(motors[i], Speed, false); //Further refactoring is required if motors need to move independently, but we aren't sure if that is the case yet.
+    }
+    else if(action == 2){
+      for(int i = 0; i < numMotors; ++i)
+        backwards(motor, Speed, false);
+    }
+    else if(action == 0){
+      for(int i = 0; i < numMotors; ++i)
+        stopMotor(motor, false);
+    }
+  }
+}
+
+void forward(Servo motor, int inputSpeed, bool printMicroseconds){
+  /*
+   Function takes a Servo class variable and writes a PWM with a certain duration in microseconds.
+   The map function is based on the variables set in the global scope
+   Motor goes forward
+   */
+  //maps throttle from 0-100 to corresponding 
+  int motorSpeed = map(inputSpeed, 0, 100, startPropForward, fullForward);
+  if(printMicroseconds){Serial.print(motorSpeed);}
+  motor.writeMicroseconds(motorSpeed);
+}
+
+void backwards(Servo motor, int inputSpeed, bool printMicroseconds){
+    /*
+   Function takes a Servo class variable and writes a PWM with a certain duration in microseconds.
+   The map function is based on the variables set in the global scope.
+   Motor goes backwards
+   */
+  int motorSpeed = map(inputSpeed, 0, 100, startPropBackwards, fullBackwards);
+  if(printMicroseconds){Serial.print(motorSpeed);}
+  motor.writeMicroseconds(motorSpeed);
+}
+
+void stopMotor(Servo motor, bool printMicroseconds){
+    /*
+   Function takes a Servo class variable and writes a PWM that corresponds to the controllers neutral.
+   */
+  if(printMicroseconds){Serial.print(neutral);}
+  motor.writeMicroseconds(neutral);
+}
